@@ -10,15 +10,19 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "bulma": "^0.7.2",
+    "css-loader": "^1.0.0",
+    "extract-text-webpack-plugin": "^4.0.0-beta.0",
+    "node-sass": "^4.9.4",
+    "sass-loader": "^7.1.0",
+    "style-loader": "^0.23.1",
     "webpack": "^4.21.0",
     "webpack-cli": "^3.1.2"
   },
   "dependencies": {
-    "css-loader": "^1.0.0",
     "lodash": "^4.17.11",
     "monaco-editor": "^0.14.3",
     "monaco-editor-webpack-plugin": "^1.5.4",
-    "monaco-vim": "0.0.7",
-    "style-loader": "^0.23.1"
+    "monaco-vim": "0.0.7"
   }
 }
