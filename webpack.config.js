@@ -1,5 +1,6 @@
 const path = require('path');
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
+const ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 module.exports = {
     entry: './src/index.js',
@@ -9,12 +10,24 @@ module.exports = {
     },
     module: {
         rules: [{
-            test: /\.css$/,
-            use: ['style-loader', 'css-loader']
-        }]
+            test: /\.scss$/,
+            use: ExtractTextPlugin.extract({
+                fallback: 'style-loader',
+                use: [
+                    'css-loader',
+                    'sass-loader'
+                ]
+            })
+        },
+            {
+                test: /\.css$/,
+                use: ['style-loader', 'css-loader']
+            }
+        ]
     },
     plugins: [
-        new MonacoWebpackPlugin()
+        new MonacoWebpackPlugin(),
+        new ExtractTextPlugin('css/mystyles.css'),
     ]
 };
 
