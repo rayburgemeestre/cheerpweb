@@ -1,6 +1,13 @@
 import _ from 'lodash';
 import * as monaco from 'monaco-editor';
 import { initVimMode } from 'monaco-vim';
+import Vue from 'vue'
+import App from './App.vue'
+
+new Vue({
+      el: '#app',
+      render: h => h(App)
+})
 
 require('./mystyles.scss');
 
