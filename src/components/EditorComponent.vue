@@ -22,7 +22,7 @@ export default {
       type: String,
       required: true
     },
-    code: {
+    value: {
       type: String,
       required: false
     },
@@ -37,17 +37,26 @@ export default {
   },
   mounted() {
     this.editor = monaco.editor.create(document.getElementById(this.name), {
-      value: this.code,
+      value: this.value,
       language: this.language,
       automaticLayout: true
     });
+
+    this.editor.onDidChangeModelContent(event => {
+      const value = this.editor.getValue()
+      if (this.value !== value) {
+        this.$emit('input', value, event)
+      }
+    });
+
     this.vimMode_1 = initVimMode(this.editor, document.getElementById(this.name + "_status"))
   },
   watch: {
-    code(new_val) {
+    value(new_val) {
       if (this.editor) {
         if (new_val !== this.editor.getValue()) {
           this.editor.setValue(new_val)
+          this.$emit('input', new_val);
         }
       }
     },

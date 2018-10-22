@@ -74,7 +74,7 @@
                   </ul>
                 </div>
 
-                <editor-component name="cpp" language="cpp" height="70vh" :code="cpp_code" :vim_mode="vim_mode" />
+                <editor-component v-model="cpp_code" name="cpp" language="cpp" height="50vh" :vim_mode="vim_mode" />
 
               </div>
               <div class="row">
@@ -84,7 +84,7 @@
                     <li class="is-active"><a>HTML</a></li>
                   </ul>
                 </div>
-                <editor-component name="html" language="html" height="30vh"  :code="html_code" :vim_mode="vim_mode" />
+                <editor-component v-model="html_code" name="html" language="html" height="50vh" :vim_mode="vim_mode" />
               </div>
             </div>
 
@@ -97,7 +97,7 @@
                     <li class="is-active"><a>Javascript</a></li>
                   </ul>
                 </div>
-                <editor-component name="js" language="javascript" height="70vh" :code="js_code" :vim_mode="vim_mode" />
+                <editor-component v-model="js_code" name="js" language="javascript" height="50vh" :vim_mode="vim_mode" />
               </div>
               <div class="row">
                 <div class="tabs">
@@ -106,7 +106,10 @@
                     <li><a>Run output</a></li>
                   </ul>
                 </div>
+                <!--
                 <textarea class="textarea" placeholder="Compiler output will be displayed here."></textarea>
+                -->
+               <iframe src="about:blank" v-on:load="onLoadIframe" name="myIframe"></iframe>
               </div>
             </div>
           </div>
@@ -119,6 +122,7 @@
 
 <script>
 import EditorComponent from './components/EditorComponent.vue'
+const _ = require('lodash');
 
 const cpp_code = `
 #include <cheerp/client.h>
@@ -201,6 +205,10 @@ var _$pstr=new Uint8Array([112,97,103,101,116,105,116,108,101,0]);
 var _$pstr1=new Uint8Array([76,105,116,101,114,97,108,32,67,43,43,32,115,116,114,105,110,103,0]);
 __Z7webMainv();`.trim();
 
+function findIframeByName(name) {
+  return _.find(window.frames, frame => frame.name === name);
+}
+
 export default {
   props: {
     vim_mode: {
@@ -222,6 +230,30 @@ export default {
   },
   components: {
     EditorComponent
+  },
+  methods: {
+    update_iframe(name) {
+      const iframe = findIframeByName(name);
+      iframe.document.body.innerHTML = '';
+      iframe.document.write(this.html_code);
+      iframe.document.write("<script>");
+      iframe.document.write(this.js_code);
+      iframe.document.write("<\/script>");
+    },
+    onLoadIframe(event) {
+      // iframe ready
+      this.update_iframe(event.currentTarget.name);
+    }
+  },
+  watch: {
+    html_code(new_val) {
+      this.update_iframe('myIframe');
+    },
+    cpp_code(new_val) {
+    },
+    js_code(new_val) {
+      this.update_iframe('myIframe');
+    },
   }
 }
 </script>

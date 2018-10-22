@@ -5,10 +5,10 @@
     height: calc(100vh - ( 3.25rem - .75rem ) );
 }
 
-textarea.textarea {
+iframe, textarea.textarea {
     width: calc(100vh - ( 6rem) );
     min-width: calc(100vh - ( 6rem) );
-    height: calc(30vh - ( 8rem) );
+    height: calc(50vh - ( 8rem) );
 }
 
 .tags {
