@@ -4,18 +4,7 @@
 .is-fullheight.columns {
     height: calc(100vh - ( 3.25rem - .75rem ) );
 }
-#container_editor_cpp, #container_editor_html, #container_editor_javascript {
-    width: calc(100vh - ( 6rem) );
-}
-#container_editor_cpp {
-    height: calc(70vh - ( 8rem) );
-}
-#container_editor_html {
-    height: calc(30vh - ( 8rem) );
-}
-#container_editor_javascript {
-    height: calc(70vh - ( 8rem) );
-}
+
 textarea.textarea {
     width: calc(100vh - ( 6rem) );
     min-width: calc(100vh - ( 6rem) );
