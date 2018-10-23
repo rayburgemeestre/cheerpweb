@@ -1,130 +1,131 @@
 <template>
-    <div class="columns is-fullheight">
-      <div class="column">
-        <nav class="navbar is-black" role="navigation" aria-label="main navigation">
-          <div class="navbar-brand">
-            <a class="navbar-item" href="https://bulma.io">
-              <img src="dist/cheerp.png" height="28">
+  <div class="columns is-fullheight">
+    <div class="column">
+      <nav class="navbar is-black" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+          <a class="navbar-item" href="https://bulma.io">
+            <img src="cheerp.png" height="28">
+          </a>
+
+          <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+          </a>
+        </div>
+
+        <div id="navbarBasicExample" class="navbar-menu">
+          <div class="navbar-start">
+            <a class="navbar-item">
+              Home
             </a>
 
-            <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
-              <span aria-hidden="true"></span>
-              <span aria-hidden="true"></span>
-              <span aria-hidden="true"></span>
+            <a class="navbar-item">
+              Documentation
             </a>
-          </div>
 
-          <div id="navbarBasicExample" class="navbar-menu">
-            <div class="navbar-start">
-              <a class="navbar-item">
-                Home
+            <div class="navbar-item has-dropdown is-hoverable">
+              <a class="navbar-link">
+                More
               </a>
 
-              <a class="navbar-item">
-                Documentation
-              </a>
-
-              <div class="navbar-item has-dropdown is-hoverable">
-                <a class="navbar-link">
-                  More
+              <div class="navbar-dropdown">
+                <a class="navbar-item">
+                  About
                 </a>
-
-                <div class="navbar-dropdown">
-                  <a class="navbar-item">
-                    About
-                  </a>
-                  <a class="navbar-item">
-                    Jobs
-                  </a>
-                  <a class="navbar-item">
-                    Contact
-                  </a>
-                  <hr class="navbar-divider">
-                  <a class="navbar-item">
-                    Report an issue
-                  </a>
-                </div>
-              </div>
-            </div>
-
-            <div class="navbar-end">
-              <div class="navbar-item">
-                <div class="buttons">
-                  <a class="button is-primary" v-on:click="">
-                    <strong>Compile</strong>
-                  </a>
-                  <a class="button is-light">
-                    Run
-                  </a>
-                </div>
+                <a class="navbar-item">
+                  Jobs
+                </a>
+                <a class="navbar-item">
+                  Contact
+                </a>
+                <hr class="navbar-divider">
+                <a class="navbar-item">
+                  Report an issue
+                </a>
               </div>
             </div>
           </div>
-        </nav>
 
-        <div class="columns is-fullheight">
-          <div class="column">
-            <div class="rows">
-              <div class="row">
-
-                <div class="tabs">
-                  <ul>
-                    <li class="is-active"><a>Code editor</a></li>
-                    <li><a>Compiler</a></li>
-                  </ul>
-                </div>
-
-                <editor-component v-model="cpp_code" name="cpp" language="cpp" height="50vh" :vim_mode="vim_mode" />
-
-              </div>
-              <div class="row">
-
-                <div class="tabs">
-                  <ul>
-                    <li class="is-active"><a>HTML</a></li>
-                  </ul>
-                </div>
-                <editor-component v-model="html_code" name="html" language="html" height="50vh" :vim_mode="vim_mode" />
-              </div>
-            </div>
-
-          </div>
-          <div class="column">
-            <div class="rows">
-              <div class="row">
-                <div class="tabs">
-                  <ul>
-                    <li class="is-active"><a>Javascript</a></li>
-                  </ul>
-                </div>
-                <editor-component v-model="js_code" name="js" language="javascript" height="50vh" :vim_mode="vim_mode" />
-              </div>
-              <div class="row">
-                <div class="tabs">
-                  <ul>
-                    <li class="is-active"><a>Compiler output</a></li>
-                    <li><a>Run output</a></li>
-                  </ul>
-                </div>
-                <!--
-                <textarea class="textarea" placeholder="Compiler output will be displayed here."></textarea>
-                -->
-               <iframe src="about:blank" v-on:load="onLoadIframe" name="myIframe"></iframe>
+          <div class="navbar-end">
+            <div class="navbar-item">
+              <div class="buttons">
+                <a class="button is-primary" v-on:click="compile" v-shortkey.once="['ctrl', 'f9']" @shortkey="compile()">
+                  <strong>Compile</strong>
+                </a>
+                <a class="button is-light" v-on:click="run" v-shortkey.once="['ctrl', 'f10']" @shortkey="run()">
+                  Run
+                </a>
               </div>
             </div>
           </div>
         </div>
+      </nav>
 
-        <!-- for development commented out <script src="main.js"></script> -->
+      <div class="columns is-fullheight">
+        <div class="column">
+          <div class="rows">
+            <div class="row">
+
+              <div class="tabs">
+                <ul>
+                  <li class="is-active"><a>Code editor</a></li>
+                  <li><a>Compiler</a></li>
+                </ul>
+              </div>
+
+              <editor-component v-model="cpp_code" name="cpp" language="cpp" height="50vh" :vim_mode="vim_mode" />
+
+            </div>
+            <div class="row">
+
+              <div class="tabs">
+                <ul>
+                  <li class="is-active"><a>HTML</a></li>
+                </ul>
+              </div>
+              <editor-component v-model="html_code" name="html" language="html" height="50vh" :vim_mode="vim_mode" />
+            </div>
+          </div>
+
+        </div>
+        <div class="column">
+          <div class="rows">
+            <div class="row">
+              <div class="tabs">
+                <ul>
+                  <li class="is-active"><a>Javascript</a></li>
+                </ul>
+              </div>
+              <editor-component v-model="js_code" name="js" language="javascript" height="50vh" :vim_mode="vim_mode" />
+            </div>
+            <div class="row">
+              <div class="tabs">
+                <ul>
+                  <li class="is-active"><a>Compiler output</a></li>
+                  <li><a>Run output</a></li>
+                </ul>
+              </div>
+              <!--
+              <textarea class="textarea" placeholder="Compiler output will be displayed here."></textarea>
+              -->
+              <iframe src="about:blank" v-on:load="onLoadIframe" name="myIframe"></iframe>
+            </div>
+          </div>
+        </div>
       </div>
+
+      <!-- for development commented out <script src="main.js"></script> -->
     </div>
+  </div>
 </template>
 
 <script>
-import EditorComponent from './components/EditorComponent.vue'
-const _ = require('lodash');
+    import EditorComponent from './components/EditorComponent.vue'
+    const _ = require('lodash');
+    const axios = require('axios');
 
-const cpp_code = `
+    const cpp_code = `
 #include <cheerp/client.h>
 #include <cheerp/clientlib.h>
 
@@ -147,7 +148,7 @@ void webMain()
     changeTitle("Literal C++ string");
 }`.trim();
 
-const html_code = `
+    const html_code = `
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -168,7 +169,7 @@ const html_code = `
   </body>
 </html>`.trim();
 
-const js_code = `
+    const js_code = `
 "use strict";
 /*Compiled using Cheerp (R) by Leaning Technologies Ltd*/
 var aSlot=null;var oSlot=0;var nullArray=[null];var nullObj={d:nullArray,o:0};
@@ -205,66 +206,82 @@ var _$pstr=new Uint8Array([112,97,103,101,116,105,116,108,101,0]);
 var _$pstr1=new Uint8Array([76,105,116,101,114,97,108,32,67,43,43,32,115,116,114,105,110,103,0]);
 __Z7webMainv();`.trim();
 
-function findIframeByName(name) {
-  return _.find(window.frames, frame => frame.name === name);
-}
+    function findIframeByName(name) {
+        return _.find(window.frames, frame => frame.name === name);
+    }
 
-export default {
-  props: {
-    vim_mode: {
-        type: Boolean,
-        default: true
-    },
-    cpp_code: {
-        type: String,
-        default: cpp_code,
-    },
-    html_code: {
-        type: String,
-        default: html_code,
-    },
-    js_code: {
-        type: String,
-        default: js_code,
+    export default {
+        props: {
+            vim_mode: {
+                type: Boolean,
+                default: true
+            },
+            cpp_code: {
+                type: String,
+                default: cpp_code,
+            },
+            html_code: {
+                type: String,
+                default: html_code,
+            },
+            js_code: {
+                type: String,
+                // default: js_code,
+            }
+        },
+        components: {
+            EditorComponent
+        },
+        methods: {
+            update_iframe(name) {
+                const iframe = findIframeByName(name);
+                iframe.document.body.innerHTML = '';
+                iframe.document.write(this.html_code);
+                iframe.document.write("<script>");
+                iframe.document.write(this.js_code);
+                iframe.document.write("<\/script>");
+            },
+            onLoadIframe(event) {
+                // iframe ready, set flag?
+            },
+            compile() {
+                axios.post('//localhost:5000/compile', {
+                    flags: '',
+                    source: this.cpp_code
+                })
+                    .then(function (response) {
+                        // response.data.retcode
+                        // response.data.stdout
+                        // response.data.stderr
+                        this.js_code = response.data.javascript;
+                    }.bind(this))
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+            },
+            run() {
+                console.log('running..');
+                this.update_iframe('myIframe');
+            },
+        },
+        watch: {
+            html_code(new_val) {
+            },
+            cpp_code(new_val) {
+            },
+            js_code(new_val) {
+            },
+        }
     }
-  },
-  components: {
-    EditorComponent
-  },
-  methods: {
-    update_iframe(name) {
-      const iframe = findIframeByName(name);
-      iframe.document.body.innerHTML = '';
-      iframe.document.write(this.html_code);
-      iframe.document.write("<script>");
-      iframe.document.write(this.js_code);
-      iframe.document.write("<\/script>");
-    },
-    onLoadIframe(event) {
-      // iframe ready
-      this.update_iframe(event.currentTarget.name);
-    }
-  },
-  watch: {
-    html_code(new_val) {
-      this.update_iframe('myIframe');
-    },
-    cpp_code(new_val) {
-    },
-    js_code(new_val) {
-      this.update_iframe('myIframe');
-    },
-  }
-}
 </script>
 
 <style scoped>
-.full-width {
+  .full-width {
     width: 100%;
-}
-.center-content {
+  }
+  .center-content {
     display: flex;
     justify-content: center;
     align-items: center;
-}
+  }
 </style>

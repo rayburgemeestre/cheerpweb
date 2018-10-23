@@ -11,69 +11,69 @@
 </template>
 
 <script>
-import { initVimMode } from 'monaco-vim';
-export default {
-  props: {
-    vim_mode: {
-      type: Boolean,
-      required: true
-    },
-    name: {
-      type: String,
-      required: true
-    },
-    value: {
-      type: String,
-      required: false
-    },
-    language: {
-      type: String,
-      required: false
-    },
-    height: {
-      type: String,
-      required: true
-    }
-  },
-  mounted() {
-    this.editor = monaco.editor.create(document.getElementById(this.name), {
-      value: this.value,
-      language: this.language,
-      automaticLayout: true
-    });
+    import { initVimMode } from 'monaco-vim';
+    export default {
+        props: {
+            vim_mode: {
+                type: Boolean,
+                required: true
+            },
+            name: {
+                type: String,
+                required: true
+            },
+            value: {
+                type: String,
+                required: false
+            },
+            language: {
+                type: String,
+                required: false
+            },
+            height: {
+                type: String,
+                required: true
+            }
+        },
+        mounted() {
+            this.editor = monaco.editor.create(document.getElementById(this.name), {
+                value: this.value,
+                language: this.language,
+                automaticLayout: true
+            });
 
-    this.editor.onDidChangeModelContent(event => {
-      const value = this.editor.getValue()
-      if (this.value !== value) {
-        this.$emit('input', value, event)
-      }
-    });
+            this.editor.onDidChangeModelContent(event => {
+                const value = this.editor.getValue()
+                if (this.value !== value) {
+                    this.$emit('input', value, event)
+                }
+            });
 
-    this.vimMode_1 = initVimMode(this.editor, document.getElementById(this.name + "_status"))
-  },
-  watch: {
-    value(new_val) {
-      if (this.editor) {
-        if (new_val !== this.editor.getValue()) {
-          this.editor.setValue(new_val)
-          this.$emit('input', new_val);
+            this.vimMode_1 = initVimMode(this.editor, document.getElementById(this.name + "_status"))
+        },
+        watch: {
+            value(new_val) {
+                if (this.editor) {
+                    if (new_val !== this.editor.getValue()) {
+                        this.editor.setValue(new_val)
+                        this.$emit('input', new_val);
+                    }
+                }
+            },
+            vim_mode(new_val) {
+                if (new_val) {
+                    this.vimMode_1 = initVimMode(this.editor, document.getElementById(this.name + "_status"))
+                } else {
+                    this.vimMode_1.dispose();
+                    document.getElementById(this.name + "_status").innerHTML = '';
+                }
+            }
         }
-      }
-    },
-    vim_mode(new_val) {
-      if (new_val) {
-        this.vimMode_1 = initVimMode(this.editor, document.getElementById(this.name + "_status"))
-      } else {
-        this.vimMode_1.dispose();
-        document.getElementById(this.name + "_status").innerHTML = '';
-      }
     }
-  }
-}
 </script>
 
 <style scoped>
-.container {
-  width: calc(100vh - ( 6rem) );
-}
+  .container {
+    width: calc(50vw - ( 6rem) );
+  }
 </style>

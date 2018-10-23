@@ -6,7 +6,15 @@ const { VueLoaderPlugin } = require('vue-loader');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-    mode: 'production',
+    mode: 'development', // change to production when ready
+
+    devServer: {
+        hot: true,
+        watchOptions: {
+            poll: true
+        }
+    },
+
     entry: './src/index.js',
     output: {
         filename: 'main.js',
@@ -35,6 +43,12 @@ module.exports = {
         ]
     },
     plugins: [
+        new webpack.HotModuleReplacementPlugin(), // for development
+        new HtmlWebpackPlugin({
+            filename: 'index.html',
+            template: 'dist/index.html',
+            inject: true
+        }), // for development
         new MonacoWebpackPlugin(),
         new ExtractTextPlugin('css/mystyles.css'),
         new VueLoaderPlugin()
