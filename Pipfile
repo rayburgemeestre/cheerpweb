@@ -1,0 +1,9 @@
+[requires]
+python_version = "3.6"
+
+[packages]
+flask = "*"
+flask-api = "*"
+flask-cors = "*"
+fasteners = "*"
+exec-helpers = "*"
