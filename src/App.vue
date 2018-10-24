@@ -154,8 +154,7 @@ void webMain()
   <head>
     <meta charset="utf-8">
     <title>Cheerp test</title>
-    <script defer src="example.js"><\/script>
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"><\/script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"><\/script>
     <script>
         // Use jQuery to make a (trivial) change to the page
         function changeTitle(str)
