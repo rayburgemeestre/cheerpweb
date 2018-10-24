@@ -6,6 +6,7 @@ metadata:
   annotations:
     # enable kube-lego for this ingress
     kubernetes.io/tls-acme: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   # this enables tls for the specified domain names
   tls:
