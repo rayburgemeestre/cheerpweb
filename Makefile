@@ -11,6 +11,7 @@ prepare:
 
 .PHONY: build
 build:
+	npm install
 	npm run build
 
 .PHONY: dev
