@@ -6,7 +6,7 @@ prepare:
 		wget https://nodejs.org/dist/v8.12.0/node-v8.12.0-linux-x64.tar.xz && \
 		tar -xvf node-v8.12.0-linux-x64.tar.xz && \
 		cd node-v8.12.0-linux-x64/ && \
-		sudo cp -prv * /usr/local/; \
+		sudo cp -pr * /usr/local/; \
 	fi
 
 .PHONY: build
@@ -24,7 +24,7 @@ docker_api:
 
 .PHONY: docker_web
 docker_web:
-	rsync -raPv --delete dist docker_web/ && cd docker_web/ && bash build.sh
+	rsync -raP --delete dist docker_web/ && cd docker_web/ && bash build.sh
 
 .PHONY: docker_api_publish
 docker_api_publish:
