@@ -245,7 +245,8 @@ __Z7webMainv();`.trim();
                 // iframe ready, set flag?
             },
             compile() {
-                axios.post('//localhost:5000/compile', {
+                // axios.post('//localhost:5000/compile', {
+                axios.post('//cheerp.cppse.nl/api/compile', {
                     flags: '',
                     source: this.cpp_code
                 })

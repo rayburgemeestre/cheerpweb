@@ -1,0 +1,26 @@
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: cheerpweb
+  annotations:
+    # enable kube-lego for this ingress
+    kubernetes.io/tls-acme: "true"
+spec:
+  # this enables tls for the specified domain names
+  tls:
+  - hosts:
+    - cheerp.cppse.nl
+    secretName: webserver-tls
+  rules:
+  - host: cheerp.cppse.nl
+    http:
+      paths:
+      - path: /api
+        backend:
+          serviceName: cheerpapi
+          servicePort: 5000
+      - path: /
+        backend:
+          serviceName: cheerpweb
+          servicePort: 80
