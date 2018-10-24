@@ -14,9 +14,8 @@ RUN apt-get -y install python3-pip
 RUN mkdir /mnt/work
 
 COPY Pipfile /mnt/work/
-
+COPY Pipfile.lock /mnt/work/
 WORKDIR /mnt/work
-
 RUN LC_ALL=C.UTF-8 LANG=C.UTF-8 python3 -m pip install pipenv && \
     LC_ALL=C.UTF-8 LANG=C.UTF-8 python3 -m pipenv install
 

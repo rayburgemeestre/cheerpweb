@@ -1,0 +1,13 @@
+language: javascript
+
+sudo: required
+dist: xenial
+
+before_install:
+  - make prepare
+  - make clean
+
+script:
+  - make build
+  - make docker_api
+  - make docker_web
