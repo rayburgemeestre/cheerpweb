@@ -9,6 +9,7 @@ module.exports = {
     mode: 'development', // change to production when ready
 
     devServer: {
+        contentBase: "./dist",
         hot: true,
         watchOptions: {
             poll: true

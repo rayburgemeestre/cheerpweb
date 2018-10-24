@@ -30,6 +30,7 @@
     "lodash": "^4.17.11",
     "monaco-editor": "^0.14.3",
     "monaco-editor-webpack-plugin": "^1.5.4",
+    "monaco-themes": "^0.2.5",
     "monaco-vim": "0.0.7",
     "vue": "^2.5.17",
     "vue-router": "^3.0.1",

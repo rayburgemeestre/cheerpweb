@@ -39,9 +39,16 @@
             this.editor = monaco.editor.create(document.getElementById(this.name), {
                 value: this.value,
                 language: this.language,
-                automaticLayout: true
+                automaticLayout: true,
             });
-
+            /*
+            fetch('/themes/Dawn.json')
+                .then(data => data.json())
+                .then(data => {
+                        monaco.editor.defineTheme('custom', data);
+                        monaco.editor.setTheme('custom');
+                });
+            */
             this.editor.onDidChangeModelContent(event => {
                 const value = this.editor.getValue()
                 if (this.value !== value) {
@@ -74,6 +81,6 @@
 
 <style scoped>
   .container {
-    width: calc(50vw - ( 6rem) );
+    width: calc(50vw - ( 2.5rem) );
   }
 </style>

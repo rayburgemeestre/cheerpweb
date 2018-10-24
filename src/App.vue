@@ -245,7 +245,7 @@ __Z7webMainv();`.trim();
             },
             compile() {
                 // axios.post('//localhost:5000/compile', {
-                axios.post('//cheerp.cppse.nl/api/compile', {
+                axios.post('https://cheerp.cppse.nl/api/compile', {
                     flags: '',
                     source: this.cpp_code
                 })
