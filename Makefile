@@ -6,7 +6,7 @@ prepare:
 		wget https://nodejs.org/dist/v8.12.0/node-v8.12.0-linux-x64.tar.xz && \
 		tar -xvf node-v8.12.0-linux-x64.tar.xz && \
 		cd node-v8.12.0-linux-x64/ && \
-		cp -prv * /usr/local/; \
+		sudo cp -prv * /usr/local/; \
 	fi
 
 .PHONY: build
