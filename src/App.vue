@@ -74,7 +74,7 @@
                 </ul>
               </div>
 
-              <editor-component v-model="cpp_code" name="cpp" language="cpp" height="50vh" :vim_mode="vim_mode" />
+              <editor-component v-model="cpp_code" name="cpp" language="cpp" height="50vh"/>
 
             </div>
             <div class="row">
@@ -84,7 +84,7 @@
                   <li class="is-active"><a>HTML</a></li>
                 </ul>
               </div>
-              <editor-component v-model="html_code" name="html" language="html" height="50vh" :vim_mode="vim_mode" />
+              <editor-component v-model="html_code" name="html" language="html" height="50vh"/>
             </div>
           </div>
 
@@ -97,7 +97,7 @@
                   <li class="is-active"><a>Javascript</a></li>
                 </ul>
               </div>
-              <editor-component v-model="js_code" name="js" language="javascript" height="50vh" :vim_mode="vim_mode" />
+              <editor-component v-model="js_code" name="js" language="javascript" height="50vh"/>
             </div>
             <div class="row">
               <div class="tabs">
@@ -211,10 +211,6 @@ __Z7webMainv();`.trim();
 
     export default {
         props: {
-            vim_mode: {
-                type: Boolean,
-                default: true
-            },
             cpp_code: {
                 type: String,
                 default: cpp_code,
@@ -260,7 +256,6 @@ __Z7webMainv();`.trim();
                     });
             },
             run() {
-                console.log('running..');
                 this.update_iframe('myIframe');
             },
         },

@@ -4,6 +4,7 @@
     <div class="tags has-addons">
       <span class="tag"><label class="checkbox">
         <input type="checkbox" v-model="vim_mode">VIM</label>
+        <input type="checkbox" v-model="emacs_mode">EMACS</label>
       </span>
       <span class="tag is-primary" :id="`${name}_status`"></span>
     </div>
@@ -12,10 +13,18 @@
 
 <script>
     import { initVimMode } from 'monaco-vim';
+    import { EmacsExtension } from 'monaco-emacs';
+
     export default {
         props: {
             vim_mode: {
                 type: Boolean,
+                default: false,
+                required: true
+            },
+            emacs_mode: {
+                type: Boolean,
+                default: false,
                 required: true
             },
             name: {
@@ -56,7 +65,7 @@
                 }
             });
 
-            this.vimMode_1 = initVimMode(this.editor, document.getElementById(this.name + "_status"))
+            // this.vimMode_1 = initVimMode(this.editor, document.getElementById(this.name + "_status"))
         },
         watch: {
             value(new_val) {
@@ -69,9 +78,28 @@
             },
             vim_mode(new_val) {
                 if (new_val) {
+                    this.emacs_mode = false;
                     this.vimMode_1 = initVimMode(this.editor, document.getElementById(this.name + "_status"))
                 } else {
                     this.vimMode_1.dispose();
+                    document.getElementById(this.name + "_status").innerHTML = '';
+                }
+            },
+            emacs_mode(new_val) {
+                var statusNode = document.getElementById(this.name + "_status");
+                if (new_val) {
+                    this.vim_mode = false;
+                    this.emacsMode = new EmacsExtension(this.editor);
+                    this.emacsMode.onDidMarkChange(function (ev) {
+                          statusNode.textContent = ev ? 'Mark Set!' : 'Mark Unset';
+                    });
+                    this.emacsMode.onDidChangeKey(function (str) {
+                          statusNode.textContent = str;
+                    });
+                    this.emacsMode.start();
+
+                } else {
+                    if (this.emacsMode) this.emacsMode.dispose();
                     document.getElementById(this.name + "_status").innerHTML = '';
                 }
             }
