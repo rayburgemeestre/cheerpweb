@@ -6,8 +6,8 @@
 }
 
 iframe, textarea.textarea {
-    width: calc(100vh - ( 6rem) );
-    min-width: calc(100vh - ( 6rem) );
+    width: calc(50vw - ( 2.5rem) );
+    min-width: calc(50vw - ( 2.5rem) );
     height: calc(50vh - ( 8rem) );
 }
 
@@ -15,9 +15,11 @@ iframe, textarea.textarea {
     margin-left: 10px;
     margin-top: 10px;
 }
-.tag span {
+.tag {
     margin: 0;
     padding: 0;
     position:relative;
-    top:2px;
+}
+.tag span {
+    margin-left: 5px;
 }

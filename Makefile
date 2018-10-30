@@ -37,3 +37,7 @@ docker_web_publish:
 .PHONY: clean
 clean:
 	rm -rf dist/*.main.js dist/*.worker.js dist/css/ dist/main.js && rm -rf docker_web/dist
+
+.PHONY: release
+release: clean build docker_api docker_web docker_api_publish docker_web_publish
+	echo OK

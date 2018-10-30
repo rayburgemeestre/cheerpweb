@@ -13,6 +13,7 @@ CORS(app)
 def compile():
     if request.method == 'POST':
         note = str(request.data.get('source', ''))
+        flags = str(request.data.get('flags', ''))
 
         with open("/tmp/test.cpp", "w") as f:
             f.write(note)
@@ -22,18 +23,7 @@ def compile():
         stderr = ''
         retcode = 0
         output = ''
-        cmd = "/opt/cheerp/bin/clang -cheerp-no-type-optimizer -cheerp-pretty-code -cheerp-no-native-math -cheerp-no-math-imul -cheerp-no-math-fround -O3 -target cheerp /tmp/test.cpp -o /tmp/test.js"
-        # cmd = "sleep 10; echo 123"
-        # try:
-        #     stdout = subprocess.check_output(cmd, stderr=subprocess.STDOUT, timeout=2, shell=True)
-        #     stdout = stdout.decode("utf-8")
-        # except subprocess.TimeoutExpired as e:
-        #     stderr = e.output.decode("utf-8")
-        #     print(stderr)
-        # except subprocess.CalledProcessError as e:
-        #     print(e)
-        #     ret = e.returncode
-        #     stderr = e.output.decode("utf-8")
+        cmd = "/opt/cheerp/bin/clang {} /tmp/test.cpp -o /tmp/test.js".format(flags)
         with exec_helpers.Subprocess() as executor:
             try:
                 ret = executor.check_call(cmd, shell=True, timeout=2)
@@ -56,6 +46,7 @@ def compile():
         return {
                    'stdout': stdout,
                    'stderr': stderr,
+                   'command': cmd,
                    'retcode': retcode,
                    'javascript': output
                }, status.HTTP_201_CREATED

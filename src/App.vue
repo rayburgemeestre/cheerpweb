@@ -16,33 +16,20 @@
 
         <div id="navbarBasicExample" class="navbar-menu">
           <div class="navbar-start">
-            <a class="navbar-item">
-              Home
-            </a>
-
-            <a class="navbar-item">
-              Documentation
-            </a>
-
+            <!--
+            <a class="navbar-item">Home</a>
+            <a class="navbar-item">Documentation</a>
+            -->
             <div class="navbar-item has-dropdown is-hoverable">
               <a class="navbar-link">
-                More
+                Load example
               </a>
-
               <div class="navbar-dropdown">
-                <a class="navbar-item">
-                  About
-                </a>
-                <a class="navbar-item">
-                  Jobs
-                </a>
-                <a class="navbar-item">
-                  Contact
-                </a>
+                <a class="navbar-item">Example 1 (TODO)</a>
+                <a class="navbar-item">Example 2 (TODO)</a>
+                <a class="navbar-item">Example 3 (TODO)</a>
                 <hr class="navbar-divider">
-                <a class="navbar-item">
-                  Report an issue
-                </a>
+                <a class="navbar-item">Example 4 (TODO)</a>
               </div>
             </div>
           </div>
@@ -51,10 +38,10 @@
             <div class="navbar-item">
               <div class="buttons">
                 <a class="button is-primary" v-on:click="compile" v-shortkey.once="['ctrl', 'f9']" @shortkey="compile()">
-                  <strong>Compile</strong>
+                  <strong>Compile [CTRL+F9]</strong>
                 </a>
                 <a class="button is-light" v-on:click="run" v-shortkey.once="['ctrl', 'f10']" @shortkey="run()">
-                  Run
+                  Run [CTRL+F10]
                 </a>
               </div>
             </div>
@@ -69,12 +56,14 @@
 
               <div class="tabs">
                 <ul>
-                  <li class="is-active"><a>Code editor</a></li>
-                  <li><a>Compiler</a></li>
+                  <li v-bind:class="{'is-active': editor_tabs == 1}" v-on:click="editor_tabs = 1"><a>Code editor</a></li>
+                  <li v-bind:class="{'is-active': editor_tabs == 2}" v-on:click="editor_tabs = 2"><a>Compiler</a></li>
                 </ul>
               </div>
 
-              <editor-component v-model="cpp_code" name="cpp" language="cpp" height="50vh"/>
+              <editor-component v-if="editor_tabs == 1" v-model="cpp_code" name="cpp" language="cpp" height="50vh"/>
+
+              <div v-if="editor_tabs == 2" class="settings">SETTINGS HERE...</div>
 
             </div>
             <div class="row">
@@ -102,14 +91,12 @@
             <div class="row">
               <div class="tabs">
                 <ul>
-                  <li class="is-active"><a>Compiler output</a></li>
-                  <li><a>Run output</a></li>
+                  <li v-bind:class="{'is-active': output_tabs == 1}" v-on:click="output_tabs = 1"><a>Compiler output</a></li>
+                  <li v-bind:class="{'is-active': output_tabs == 2}" v-on:click="output_tabs = 2"><a>Run output</a></li>
                 </ul>
               </div>
-              <!--
-              <textarea class="textarea" placeholder="Compiler output will be displayed here."></textarea>
-              -->
-              <iframe src="about:blank" v-on:load="onLoadIframe" name="myIframe"></iframe>
+              <textarea v-if="output_tabs == 1" class="textarea" placeholder="Compiler output will be displayed here.">{{ compiler_output }}</textarea>
+              <iframe v-if="output_tabs == 2" src="about:blank" v-on:load="onLoadIframe" name="myIframe"></iframe>
             </div>
           </div>
         </div>
@@ -211,6 +198,14 @@ __Z7webMainv();`.trim();
 
     export default {
         props: {
+            editor_tabs: {
+                type: Number,
+                default: 1,
+            },
+            output_tabs: {
+                type: Number,
+                default: 1,
+            },
             cpp_code: {
                 type: String,
                 default: cpp_code,
@@ -221,7 +216,18 @@ __Z7webMainv();`.trim();
             },
             js_code: {
                 type: String,
-                // default: js_code,
+            },
+            compiler_output: {
+                type: String,
+            },
+            compiler_flags: {
+                type: String,
+                default: '-cheerp-no-type-optimizer -cheerp-pretty-code -cheerp-no-native-math -cheerp-no-math-imul -cheerp-no-math-fround -O3 -target cheerp'
+            },
+
+            do_update_iframe: {
+                type: Boolean,
+                default: false
             }
         },
         components: {
@@ -238,17 +244,28 @@ __Z7webMainv();`.trim();
             },
             onLoadIframe(event) {
                 // iframe ready, set flag?
+                console.log("loaded iframe");
+                if (this.do_update_iframe) {
+                    this.update_iframe('myIframe');
+                    this.do_update_iframe = false;
+                }
             },
             compile() {
+                this.output_tabs = 1;
                 // axios.post('//localhost:5000/compile', {
                 axios.post('https://cheerp.cppse.nl/api/compile', {
-                    flags: '',
+                    flags: this.compiler_flags,
                     source: this.cpp_code
                 })
                     .then(function (response) {
-                        // response.data.retcode
-                        // response.data.stdout
-                        // response.data.stderr
+                       const str =
+                            'COMMAND:   ' + 'response.data.command' + '\n' +
+                            'EXIT_CODE: ' + response.data.retcode + '\n' +
+                            'STDOUT:\n------------------------------\n' +
+                            response.data.stdout +
+                            'STDERR:\n------------------------------\n' +
+                            response.data.stderr;
+                        this.compiler_output = str;
                         this.js_code = response.data.javascript;
                     }.bind(this))
                     .catch(function (error) {
@@ -256,7 +273,12 @@ __Z7webMainv();`.trim();
                     });
             },
             run() {
-                this.update_iframe('myIframe');
+                this.do_update_iframe = true;
+                this.output_tabs = 2;
+                try {
+                    this.update_iframe('myIframe');
+                }
+                catch (e) {}
             },
         },
         watch: {
@@ -278,5 +300,8 @@ __Z7webMainv();`.trim();
     display: flex;
     justify-content: center;
     align-items: center;
+  }
+  .settings {
+    height: calc(50vh - 6rem);
   }
 </style>

@@ -147,11 +147,17 @@
         },
         "exec-helpers": {
             "hashes": [
-                "sha256:13cd0b9082acd398bac46ef6fdc46240eddf8d833ee597c297440cec2b8d4142",
-                "sha256:64575c7a90ee0c38de83b947fbdaf0e48f9b5b320170c1cf12243563cc352960"
+                "sha256:114de98c53ccb5ab4e81b53beecc008e9556ecc4aed5f77e9a02c0e1eb4bcdd2",
+                "sha256:4f6a21b260d2df9efbf3aa33d8db60de131aa6b68854b1f019bb8603bd19c68c",
+                "sha256:58e4dd1e87301ac6c3ece346175c1258142f77d886db87fc67826efd49dd686d",
+                "sha256:7ccb6d10dda9ff1915963054984ccb0bc7bae1168af3fe9cf549354019044aa6",
+                "sha256:d6aeb9c54a666c14de5553b6cb8410889829921abe406ef4b5923eec96e9a63b",
+                "sha256:da2a62fceb29eb60ad508c840b461f8720ec445eaffe86785eb8c179ce7df464",
+                "sha256:eb95f6cc544c5653ebd3909849249a90094e5baadf281e6b035874ed1758edbd",
+                "sha256:f15f3166c50dad0f75e911ae2a120301881c466a95e184f215cfaf8ec2694edd"
             ],
             "index": "pypi",
-            "version": "==2.1.2"
+            "version": "==3.1.0"
         },
         "fasteners": {
             "hashes": [
@@ -194,10 +200,10 @@
         },
         "itsdangerous": {
             "hashes": [
-                "sha256:a7de3201740a857380421ef286166134e10fe58846bcefbc9d6424a69a0b99ec",
-                "sha256:aca4fc561b7671115a2156f625f2eaa5e0e3527e0adf2870340e7968c0a81f85"
+                "sha256:321b033d07f2a4136d3ec762eac9f16a10ccd60f53c0c91af90217ace7ba1f19",
+                "sha256:b12271b2047cb23eeb98c8b5622e2e5c5e9abd9784a153e9d8ef9cb4dd09d749"
             ],
-            "version": "==1.0.0"
+            "version": "==1.1.0"
         },
         "jinja2": {
             "hashes": [

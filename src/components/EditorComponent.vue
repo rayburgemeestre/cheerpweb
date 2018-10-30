@@ -2,9 +2,13 @@
   <div>
     <div class="container" :id="name" :style="{'height': `calc(${height} - ( 8rem) )`}"></div>
     <div class="tags has-addons">
+      <span class="tag">
+        <label class="checkbox">
+          <input type="checkbox" v-model="vim_mode"><span>VIM</span>
+        </label>
+      </span>
       <span class="tag"><label class="checkbox">
-        <input type="checkbox" v-model="vim_mode">VIM</label>
-        <input type="checkbox" v-model="emacs_mode">EMACS</label>
+        <input type="checkbox" v-model="emacs_mode"><span>EMACS</span></label>
       </span>
       <span class="tag is-primary" :id="`${name}_status`"></span>
     </div>
@@ -20,12 +24,10 @@
             vim_mode: {
                 type: Boolean,
                 default: false,
-                required: true
             },
             emacs_mode: {
                 type: Boolean,
                 default: false,
-                required: true
             },
             name: {
                 type: String,
@@ -51,6 +53,8 @@
                 automaticLayout: true,
             });
             /*
+            The themes seem not compatible with the vim style cursor.
+            TODO: investigate how to fix.
             fetch('/themes/Dawn.json')
                 .then(data => data.json())
                 .then(data => {
@@ -59,19 +63,17 @@
                 });
             */
             this.editor.onDidChangeModelContent(event => {
-                const value = this.editor.getValue()
+                const value = this.editor.getValue();
                 if (this.value !== value) {
                     this.$emit('input', value, event)
                 }
             });
-
-            // this.vimMode_1 = initVimMode(this.editor, document.getElementById(this.name + "_status"))
         },
         watch: {
             value(new_val) {
                 if (this.editor) {
                     if (new_val !== this.editor.getValue()) {
-                        this.editor.setValue(new_val)
+                        this.editor.setValue(new_val);
                         this.$emit('input', new_val);
                     }
                 }
