@@ -34,8 +34,6 @@ Then use the `Makefile` when developing:
 - `make dev` - build and start a hot swapping debug server (very convenient while developing)
 - `make api_dev` - start the API server in a docker image running on port 5000.
 
-One note on the above: also uncomment the line that uses `//localhost:5000/compile` instead of `https://cheerp.cppse.nl/api/compile` in `src/App.vue`.
-
 Other useful directives:
 
 - `make build` - build the release version (in `./dist`) of the UI (takes a while)

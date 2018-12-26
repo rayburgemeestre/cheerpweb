@@ -2,6 +2,8 @@ import binascii
 import os
 import exec_helpers
 import re
+import uuid
+import json
 
 from flask import request, url_for
 from flask_api import FlaskAPI, status, exceptions
@@ -16,6 +18,34 @@ def compile():
     if request.method == 'POST':
         note = str(request.data.get('source', ''))
         flags = str(request.data.get('flags', ''))
+        uuid_ = str(request.data.get('uuid', ''))
+
+        if not uuid_:
+            uuid_ = str(uuid.uuid1())
+
+
+        counter = 0
+        if os.path.exists("/data/{}/counter".format(uuid_)):
+            with open("/data/{}/counter".format(uuid_), "r") as f:
+                counter = int(f.read().strip()) + 1
+                f.close()
+        else:
+            os.mkdir("/data/{}".format(uuid_))
+
+        os.mkdir("/data/{}/{}".format(uuid_, counter))
+        with open("/data/{}/{}/environ".format(uuid_, counter), "w") as f:
+            for env in os.environ:
+                f.write("{}={}\n".format(env, os.environ[env]))
+            f.close()
+        with open("/data/{}/{}/source".format(uuid_, counter), "w") as f:
+            f.write(note)
+            f.close()
+        with open("/data/{}/{}/flags".format(uuid_, counter), "w") as f:
+            f.write(flags)
+            f.close()
+        with open("/data/{}/counter".format(uuid_), "w") as f:
+            f.write(str(counter))
+            f.close()
 
         with open("/tmp/test.cpp", "w") as f:
             f.write(note)
@@ -68,8 +98,35 @@ def compile():
                    'command': cmd,
                    'retcode': retcode,
                    'javascript': output,
-                   'wasm': binascii.b2a_base64(output_wasm).decode("utf-8") if wasm else ""
+                   'wasm': binascii.b2a_base64(output_wasm).decode("utf-8") if wasm else "",
+                   'uuid': uuid_,
+                   'version': counter,
                }, status.HTTP_201_CREATED
+
+
+@app.route("/retrieve", methods=['POST'])
+def retrieve():
+    if request.method == 'POST':
+        uuid_ = str(request.data.get('uuid', ''))
+        version = str(request.data.get('version', ''))
+        source = ''
+        flags = ''
+
+        if not os.path.exists("/data/{}/{}".format(uuid_, version)):
+            return False
+
+        with open("/data/{}/{}/source".format(uuid_, version), "r") as f:
+            source = f.read()
+            f.close()
+        with open("/data/{}/{}/flags".format(uuid_, version), "r") as f:
+            flags = f.read()
+            f.close()
+
+        return {
+                   'source': source,
+                   'flags': flags,
+               }, status.HTTP_201_CREATED
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True)

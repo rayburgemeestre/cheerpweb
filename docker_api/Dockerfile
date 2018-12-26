@@ -21,5 +21,8 @@ RUN LC_ALL=C.UTF-8 LANG=C.UTF-8 python3 -m pip install pipenv && \
 
 EXPOSE 5000
 COPY api.py /mnt/work/
+
+RUN mkdir /data
+
 CMD LC_ALL=C.UTF-8 LANG=C.UTF-8 python3 -m pipenv run python api.py
 

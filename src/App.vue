@@ -3,7 +3,7 @@
     <div class="column">
       <nav class="navbar is-black" role="navigation" aria-label="main navigation">
         <div class="navbar-brand">
-          <a class="navbar-item" href="https://bulma.io">
+          <a class="navbar-item" href="https://cheerp.cppse.nl">
             <img src="cheerp.png" height="28">
           </a>
 
@@ -24,15 +24,18 @@
               <a class="navbar-link">
                 Load example
               </a>
-                <div class="navbar-dropdown">
-                  <div v-for="item in examples">
-                    <a class="navbar-item" v-on:click="load_example(item)">{{ item.title }}</a>
-                  </div>
+              <div class="navbar-dropdown">
+                <div v-for="item in examples">
+                  <a class="navbar-item" v-on:click="load_example(item)">{{ item.title }}</a>
                 </div>
+              </div>
             </div>
           </div>
 
           <div class="navbar-end">
+            <div class="share">
+              <input class="input" type="text" v-on:focus="select_link($event)" v-model="share_link" placeholder="Compile before sharing link!">
+            </div>
             <div class="navbar-item">
               <div class="buttons">
                 <a class="button is-primary" v-on:click="compile" v-shortkey.once="['ctrl', 'f9']" @shortkey="compile()">
@@ -129,6 +132,14 @@
 
     export default {
         props: {
+            uuid: {
+                type: String,
+                default: '',
+            },
+            version: {
+                type: String,
+                default: '',
+            },
             editor_tabs: {
                 type: Number,
                 default: 1,
@@ -176,6 +187,10 @@
                     ]
                 }
             },
+            share_link: {
+                type: String,
+                default: '',
+            }
 
         },
         components: {
@@ -216,14 +231,20 @@
             },
             compile() {
                 this.output_tabs = 1;
-                //axios.post('//localhost:5000/compile', {
-                axios.post('https://cheerp.cppse.nl/api/compile', {
+
+                var url = 'https://cheerp.cppse.nl/api/compile';
+                if (window.location.href.indexOf('cheerp.cppse.nl') == -1) {
+                    // assuming local dev env
+                    url = '//localhost:5000/compile';
+                }
+                axios.post(url, {
                     flags: this.compiler_flags,
-                    source: this.cpp_code
+                    source: this.cpp_code,
+                    uuid: this.uuid,
                 })
                     .then(function (response) {
                        const str =
-                            'COMMAND:   ' + 'response.data.command' + '\n' +
+                            'COMMAND:   ' + response.data.command + '\n' +
                             'EXIT_CODE: ' + response.data.retcode + '\n' +
                             'STDOUT:\n------------------------------\n' +
                             response.data.stdout +
@@ -250,6 +271,11 @@
                         }
                         this.js_code = js.substr(0, idx) + js.substr(jdx + 1);
                         this.wasm_code = response.data.wasm;
+                        this.uuid = response.data.uuid
+                        this.version = response.data.version
+                        this.share_link = 'https://cheerp.cppse.nl/#' + this.uuid + ":" + this.version
+                        console.log(this.uuid)
+                        console.log(this.version)
                     }.bind(this))
                     .catch(function (error) {
                         console.log(error);
@@ -270,7 +296,12 @@
                 this.html_code = ex.html_code
                 this.compiler_flags = ex.flags
                 return true;
-            }
+            },
+            select_link(event) {
+                setTimeout(function() {
+                    this.select();
+                }.bind(event.target), 10);
+            },
         },
         watch: {
             html_code(new_val) {
@@ -279,6 +310,65 @@
             },
             js_code(new_val) {
             },
+        },
+        created: function() {
+            var hashchange_fun = function() {
+                if (window.location.hash.length > 3) {
+                    var h = window.location.hash.substr(1).split(':')
+                    if (h.length == 2) {
+                        var load_hash = h[0];
+                        var load_version = h[1];
+
+                        console.log("Should load: ",load_hash," ", load_version);
+                        var url = 'https://cheerp.cppse.nl/api/retrieve';
+                        if (window.location.href.indexOf('cheerp.cppse.nl') == -1) {
+                            // assuming local dev env
+                            url = '//localhost:5000/retrieve';
+                        }
+                        // Keeping this POST on purpose, just to keep things HARD for crawlers
+                        axios.post(url, {
+                            uuid: load_hash,
+                            version: load_version,
+                        })
+                        .then(function (response) {
+                            var js = response.data.source;
+                            if (js == '') {
+                                const str =
+                                    'Loading hash: '+ load_hash + '\n' +
+                                    'With version: '+ load_version + '\n' +
+                                    'FAILED.'
+                                this.compiler_output = str;
+                                return false;
+                            }
+                            const str =
+                                'Loading hash: '+ load_hash + '\n' +
+                                'With version: '+ load_version + '\n' +
+                                'SUCCEEDED.'
+                            this.compiler_output = str;
+
+                            var code = response.data.source;
+                            var flags = response.data.flags;
+
+                            this.cpp_code = code;
+                            this.compiler_flags = flags;
+
+                            this.uuid = load_hash
+                            this.version = load_version
+
+                            this.share_link = 'https://cheerp.cppse.nl/#' + this.uuid + ":" + this.version
+                        }.bind(this))
+                        .catch(function (error) {
+                            const str =
+                                'Loading hash: '+ load_hash + '\n' +
+                                'With version: '+ load_version + '\n' +
+                                'FAILED: ' + error
+                            this.compiler_output = str;
+                        });
+                    }
+                }
+            }.bind(this);
+            window.onhashchange = hashchange_fun;
+            hashchange_fun();
         }
     }
 </script>
