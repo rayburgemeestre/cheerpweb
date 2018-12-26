@@ -1,3 +1,7 @@
+## Demo
+
+https://cheerp.cppse.nl/
+
 ## Project
 
 The project constists of three parts:
@@ -6,7 +10,9 @@ The project constists of three parts:
 - The back-end API (`./docker_api`) uses a very simple Python Flask server, the back-end is deployed inside a docker container with the Cheerp compiler.
 - The docker image for the front-end (`./docker_web`) that only hosts the statically build files.
 
-One part that is not finished yet is storage, and sharing code. This is the next TODO on my list.
+And all of the above is deployed on Kubernetes, for this see the `./kube` directory.
+
+There is no storage support, so saving or sharing code is not yet possible. Be careful with this!
 
 ## Build
 
