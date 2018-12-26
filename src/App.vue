@@ -24,13 +24,11 @@
               <a class="navbar-link">
                 Load example
               </a>
-              <div class="navbar-dropdown">
-                <a class="navbar-item">Example 1 (TODO)</a>
-                <a class="navbar-item">Example 2 (TODO)</a>
-                <a class="navbar-item">Example 3 (TODO)</a>
-                <hr class="navbar-divider">
-                <a class="navbar-item">Example 4 (TODO)</a>
-              </div>
+                <div class="navbar-dropdown">
+                  <div v-for="item in examples">
+                    <a class="navbar-item" v-on:click="load_example(item)">{{ item.title }}</a>
+                  </div>
+                </div>
             </div>
           </div>
 
@@ -63,7 +61,9 @@
 
               <editor-component v-if="editor_tabs == 1" v-model="cpp_code" name="cpp" language="cpp" height="50vh"/>
 
-              <div v-if="editor_tabs == 2" class="settings">SETTINGS HERE...</div>
+              <div v-if="editor_tabs == 2" class="settings">
+              <textarea class="textarea" v-model="compiler_flags"></textarea>
+              </div>
 
             </div>
             <div class="row">
@@ -83,10 +83,12 @@
             <div class="row">
               <div class="tabs">
                 <ul>
-                  <li class="is-active"><a>Javascript</a></li>
+                  <li v-bind:class="{'is-active': js_tabs == 1}" v-on:click="js_tabs = 1"><a>Javascript</a></li>
+                  <li v-bind:class="{'is-active': js_tabs == 2}" v-on:click="js_tabs = 2" v-if="wasm_code"><a>Webassembly</a></li>
                 </ul>
               </div>
-              <editor-component v-model="js_code" name="js" language="javascript" height="50vh"/>
+              <editor-component v-if="js_tabs == 1" v-model="js_code" name="js" language="javascript" height="50vh"/>
+              <editor-component v-if="js_tabs == 2 && wasm_code" v-model="wasm_code" name="wasm" language="javascript" height="80vh"/>
             </div>
             <div class="row">
               <div class="tabs">
@@ -112,85 +114,14 @@
     const _ = require('lodash');
     const axios = require('axios');
 
-    const cpp_code = `
-#include <cheerp/client.h>
-#include <cheerp/clientlib.h>
+    import { dom_example } from './dom_example'
+    import { pong_example } from './pong_example'
 
-// We need to extend the client namespace to declare our
-// custom JavaScript function
-namespace client
-{
-    // The name should be the same as the JavaScript one
-    // The parameters needs to be a const client::String reference
-    // so that implicit conversion from const char* is supported
-    void changeTitle(const String& str);
-}
-
-using namespace client;
-
-void webMain()
-{
-    Element* titleElement=document.getElementById("pagetitle");
-    String* oldText=titleElement->get_textContent();
-    changeTitle("Literal C++ string");
-}`.trim();
-
-    const html_code = `
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>Cheerp test</title>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"><\/script>
-    <script>
-        // Use jQuery to make a (trivial) change to the page
-        function changeTitle(str)
-        {
-                $("#pagetitle").text(str);
-        }
-    <\/script>
-  </head>
-  <body>
-  <h1 id="pagetitle">Boring static text</h1>
-  </body>
-</html>`.trim();
-
-    const js_code = `
-"use strict";
-/*Compiled using Cheerp (R) by Leaning Technologies Ltd*/
-var aSlot=null;var oSlot=0;var nullArray=[null];var nullObj={d:nullArray,o:0};
-function __Z7webMainv(){
-	var LretConstructor=null;
-	LretConstructor="pagetitle";
-	LretConstructor=document.getElementById(LretConstructor);
-	LretConstructor.textContent;
-	LretConstructor="Literal C++ string";
-	changeTitle(LretConstructor);
-	return;
-}
-function _cheerpCreate_ZN6client6StringC2EPKc(Larg0,Marg0){
-	var tmp0=0,Lgeptoindexphi=0,LretConstructor$pi=null,tmp3=null;
-	LretConstructor$pi=String();
-	tmp0=Larg0[Marg0]|0;
-	if((tmp0&255)===0){
-		return String(LretConstructor$pi);
-	}else{
-		Lgeptoindexphi=0;
-	}
-	while(1){
-		tmp3=String.fromCharCode(tmp0<<24>>24);
-		LretConstructor$pi=LretConstructor$pi.concat(tmp3);
-		Lgeptoindexphi=Lgeptoindexphi+1|0;
-		tmp0=Larg0[Marg0+Lgeptoindexphi|0]|0;
-		if((tmp0&255)===0){
-			break;
-		}
-	}
-	return String(LretConstructor$pi);
-}
-var _$pstr=new Uint8Array([112,97,103,101,116,105,116,108,101,0]);
-var _$pstr1=new Uint8Array([76,105,116,101,114,97,108,32,67,43,43,32,115,116,114,105,110,103,0]);
-__Z7webMainv();`.trim();
+    let cpp_code = dom_example.cpp
+    let js_code = dom_example.js
+    let wasm_code = dom_example.wasm
+    let html_code = dom_example.html
+    let compiler_flags = dom_example.flags
 
     function findIframeByName(name) {
         return _.find(window.frames, frame => frame.name === name);
@@ -206,6 +137,10 @@ __Z7webMainv();`.trim();
                 type: Number,
                 default: 1,
             },
+            js_tabs: {
+                type: Number,
+                default: 1,
+            },
             cpp_code: {
                 type: String,
                 default: cpp_code,
@@ -217,18 +152,31 @@ __Z7webMainv();`.trim();
             js_code: {
                 type: String,
             },
+            wasm_code: {
+                type: String,
+            },
             compiler_output: {
                 type: String,
             },
             compiler_flags: {
                 type: String,
-                default: '-cheerp-no-type-optimizer -cheerp-pretty-code -cheerp-no-native-math -cheerp-no-math-imul -cheerp-no-math-fround -O3 -target cheerp'
+                default: compiler_flags
             },
 
             do_update_iframe: {
                 type: Boolean,
                 default: false
-            }
+            },
+            examples: {
+                type: Array,
+                default: function () {
+                    return [
+                        { title: 'DOM example', cpp_code: dom_example.cpp, 'js_code': dom_example.js, 'wasm_code': dom_example.wasm, 'html_code': dom_example.html, flags: dom_example.flags },
+                        { title: 'Pong WASM example', cpp_code: pong_example.cpp, 'js_code': pong_example.js, 'wasm_code': pong_example.wasm, 'html_code': pong_example.html, flags: pong_example.flags },
+                    ]
+                }
+            },
+
         },
         components: {
             EditorComponent
@@ -239,6 +187,22 @@ __Z7webMainv();`.trim();
                 iframe.document.body.innerHTML = '';
                 iframe.document.write(this.html_code);
                 iframe.document.write("<script>");
+
+                // wasm
+                iframe.document.write("function fetchBuffer(path) {\n");
+                iframe.document.write("    return new Promise( (resolve, reject) => {\n");
+                iframe.document.write("        var wasm = '" + this.wasm_code.trim() + "';\n");
+                iframe.document.write("        wasm = atob(wasm)\n");
+                iframe.document.write("\n");
+                iframe.document.write("        var len = wasm.length;\n");
+                iframe.document.write("        var bytes = new Uint8Array(len);\n");
+                iframe.document.write("        for (var i = 0; i < len; i++) {\n");
+                iframe.document.write("            bytes[i] = wasm.charCodeAt(i);\n");
+                iframe.document.write("        }\n");
+                iframe.document.write("        resolve(bytes.buffer);\n");
+                iframe.document.write("    });\n");
+                iframe.document.write("}\n");
+
                 iframe.document.write(this.js_code);
                 iframe.document.write("<\/script>");
             },
@@ -252,7 +216,7 @@ __Z7webMainv();`.trim();
             },
             compile() {
                 this.output_tabs = 1;
-                // axios.post('//localhost:5000/compile', {
+                //axios.post('//localhost:5000/compile', {
                 axios.post('https://cheerp.cppse.nl/api/compile', {
                     flags: this.compiler_flags,
                     source: this.cpp_code
@@ -266,7 +230,26 @@ __Z7webMainv();`.trim();
                             'STDERR:\n------------------------------\n' +
                             response.data.stderr;
                         this.compiler_output = str;
-                        this.js_code = response.data.javascript;
+                        var js = response.data.javascript;
+
+                        var idx = js.indexOf('function fetchBuffer'), jdx = -1;
+                        if (idx != -1) {
+                            var level = 0;
+                            for (var i=idx; ; i++) {
+                                if (js[i] == '{') {
+                                    level++;
+                                }
+                                else if (js[i] == '}') {
+                                    level--;
+                                    if (!level) {
+                                        jdx = i;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        this.js_code = js.substr(0, idx) + js.substr(jdx + 1);
+                        this.wasm_code = response.data.wasm;
                     }.bind(this))
                     .catch(function (error) {
                         console.log(error);
@@ -280,6 +263,14 @@ __Z7webMainv();`.trim();
                 }
                 catch (e) {}
             },
+            load_example(ex) {
+                this.cpp_code = ex.cpp_code
+                this.js_code = ex.js_code
+                this.wasm_code = ex.wasm_code
+                this.html_code = ex.html_code
+                this.compiler_flags = ex.flags
+                return true;
+            }
         },
         watch: {
             html_code(new_val) {

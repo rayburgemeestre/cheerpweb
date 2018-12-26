@@ -18,6 +18,10 @@ build:
 dev:
 	npm run dev
 
+.PHONY: api_dev
+api_dev:
+	cd docker_api && bash run_dev.sh
+
 .PHONY: docker_api
 docker_api:
 	cd docker_api && bash build.sh
