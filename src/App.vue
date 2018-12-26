@@ -91,7 +91,7 @@
                 </ul>
               </div>
               <editor-component v-if="js_tabs == 1" v-model="js_code" name="js" language="javascript" height="50vh"/>
-              <editor-component v-if="js_tabs == 2 && wasm_code" v-model="wasm_code" name="wasm" language="javascript" height="80vh"/>
+              <editor-component v-if="js_tabs == 2 && wasm_code" v-model="wasm_code" name="wasm" language="javascript" height="50vh"/>
             </div>
             <div class="row">
               <div class="tabs">
@@ -190,7 +190,11 @@
             share_link: {
                 type: String,
                 default: '',
-            }
+            },
+            hash_set: {
+                type: Boolean,
+                default: false,
+            },
 
         },
         components: {
@@ -274,6 +278,9 @@
                         this.uuid = response.data.uuid
                         this.version = response.data.version
                         this.share_link = 'https://cheerp.cppse.nl/#' + this.uuid + ":" + this.version
+                        this.hash_set = true
+                        window.location.hash = '#' + this.uuid + ":" + this.version
+
                         console.log(this.uuid)
                         console.log(this.version)
                     }.bind(this))
@@ -313,6 +320,10 @@
         },
         created: function() {
             var hashchange_fun = function() {
+                if (this.hash_set) {
+                    this.hash_set = false;
+                    return;
+                }
                 if (window.location.hash.length > 3) {
                     var h = window.location.hash.substr(1).split(':')
                     if (h.length == 2) {

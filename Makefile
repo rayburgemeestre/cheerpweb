@@ -44,4 +44,4 @@ clean:
 
 .PHONY: release
 release: clean build docker_api docker_web docker_api_publish docker_web_publish
-	echo OK, on the Kubernetes host execute: kubectl delete pod -l "app in (cheerpapiapp, cheerpwebapp)"
+	echo OK, on the Kubernetes host execute: kubectl delete pod -l '"app in (cheerpapiapp, cheerpwebapp)"'

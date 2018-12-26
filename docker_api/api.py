@@ -37,6 +37,10 @@ def compile():
             for env in os.environ:
                 f.write("{}={}\n".format(env, os.environ[env]))
             f.close()
+        with open("/data/{}/{}/headers".format(uuid_, counter), "w") as f:
+            for k, v in request.headers:
+                f.write("{}: {}\n".format(k, v))
+            f.close()
         with open("/data/{}/{}/source".format(uuid_, counter), "w") as f:
             f.write(note)
             f.close()
