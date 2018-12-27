@@ -119,16 +119,22 @@
     const _ = require('lodash');
     const axios = require('axios');
 
-    import { dom_example } from './examples/dom_example'
-    import { pong_example } from './examples/pong_example'
-    import { call_cpp_example } from './examples/call_cpp_example'
-    import { perf_example } from './examples/perf_example'
+    var context = require.context("./examples", true, /\.js$/);
+    var examples = [];
+    var dom_example_index = -1;
+    context.keys().forEach(function (key) {
+        if (key.indexOf('dom.js') != -1) {
+            dom_example_index = examples.length;
+            console.log("FOUND: " + dom_example_index);
+        }
+        examples.push(context(key)['example'])
+    });
 
-    let cpp_code = dom_example.cpp
-    let js_code = dom_example.js
-    let wasm_code = dom_example.wasm
-    let html_code = dom_example.html
-    let compiler_flags = dom_example.flags
+    let cpp_code = examples[dom_example_index].cpp_code,
+        js_code = examples[dom_example_index].js_code,
+        wasm_code = examples[dom_example_index].wasm_code,
+        html_code = examples[dom_example_index].html_code,
+        compiler_flags = examples[dom_example_index].flags;
 
     function findIframeByName(name) {
         return _.find(window.frames, frame => frame.name === name);
@@ -188,12 +194,7 @@
             examples: {
                 type: Array,
                 default: function () {
-                    return [
-                        { title: 'DOM example', cpp_code: dom_example.cpp, 'js_code': dom_example.js, 'wasm_code': dom_example.wasm, 'html_code': dom_example.html, flags: dom_example.flags },
-                        { title: 'Pong WASM example', cpp_code: pong_example.cpp, 'js_code': pong_example.js, 'wasm_code': pong_example.wasm, 'html_code': pong_example.html, flags: pong_example.flags },
-                        { title: 'Call C++ example', cpp_code: call_cpp_example.cpp, 'js_code': call_cpp_example.js, 'wasm_code': call_cpp_example.wasm, 'html_code': call_cpp_example.html, flags: call_cpp_example.flags },
-                        { title: 'JS vs Compiled JS perf', cpp_code: perf_example.cpp, 'js_code': perf_example.js, 'wasm_code': perf_example.wasm, 'html_code': perf_example.html, flags: perf_example.flags },
-                    ]
+                    return examples
                 }
             },
             share_link: {
@@ -385,12 +386,9 @@
             },
         },
         watch: {
-            html_code(new_val) {
-            },
-            cpp_code(new_val) {
-            },
-            js_code(new_val) {
-            },
+            html_code(new_val) {},
+            cpp_code(new_val) {},
+            js_code(new_val) {},
         },
         created: function() {
             var hashchange_fun = function() {
