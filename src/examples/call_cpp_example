@@ -50,7 +50,7 @@ const html_code = `
     </script>
   </head>
   <body>
-  <a id="clickText" href="#" onclick="callCPPCode()">Click to call C++ code</a>
+  <a id="clickText" href="javascript:void(0)" onclick="callCPPCode()">Click to call C++ code</a>
   </body>
 </html>`.trim();
 
