@@ -243,13 +243,19 @@
                     //const iframe = findIframeByName(name);
                     const iframe = document.getElementsByTagName('iframe')[0];
                     //iframe.document.body.innerHTML = ''
-                    var head = this.html_code.indexOf("<head>");
+                    var marker = '<!-- MARKER: Include javascript here. -->';
+                    var m = this.html_code.indexOf(marker);
                     var s = "";
-                    if (head != -1) {
-                        s += this.html_code.substr(0, head + 6 /* len(<head>) */);
-                    }
-                    else {
-                        s += this.html_code;
+                    if (m != -1) {
+                        s += this.html_code.substr(0, m);
+                    } else {
+                        var head = this.html_code.indexOf("<head>");
+                        if (head != -1) {
+                            s += this.html_code.substr(0, head + 6 /* len(<head>) */);
+                        }
+                        else {
+                            s += this.html_code;
+                        }
                     }
 
                     s += "<script>";
@@ -270,7 +276,9 @@
                     s += this.js_code;
                     s += "<\/script>";
 
-                    if (head != -1) {
+                    if (m != -1) {
+                        s += this.html_code.substr(m);
+                    } else if (head != -1) {
                         s += this.html_code.substr(head + 6 /* len(<head>) */ + 1);
                     }
 

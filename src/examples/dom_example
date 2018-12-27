@@ -38,6 +38,7 @@ const html_code = `
   </head>
   <body>
   <h1 id="pagetitle">Boring static text</h1>
+  <!-- MARKER: Include javascript here. -->
   </body>
 </html>`.trim();
 

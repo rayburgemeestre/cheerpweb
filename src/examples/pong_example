@@ -220,6 +220,7 @@ const html_code = `
   </head>
   <body>
     <canvas id="pongcanvas"></canvas>
+    <!-- MARKER: Include javascript here. -->
   </body>
 </html>
 `.trim();
