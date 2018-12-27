@@ -62,3 +62,7 @@ https://itnext.io/vue-js-and-webpack-4-from-scratch-part-2-5038cc9deffb
 
 Pass "reference" to child components
 https://stackoverflow.com/questions/40915436/vuejs-update-parent-data-from-child-component
+
+## License
+
+MPL 2 , see LICENSE file.
