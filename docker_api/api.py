@@ -17,6 +17,7 @@ CORS(app)
 def compile():
     if request.method == 'POST':
         note = str(request.data.get('source', ''))
+        html = str(request.data.get('html', ''))
         flags = str(request.data.get('flags', ''))
         uuid_ = str(request.data.get('uuid', ''))
 
@@ -43,6 +44,9 @@ def compile():
             f.close()
         with open("/data/{}/{}/source".format(uuid_, counter), "w") as f:
             f.write(note)
+            f.close()
+        with open("/data/{}/{}/html".format(uuid_, counter), "w") as f:
+            f.write(html)
             f.close()
         with open("/data/{}/{}/flags".format(uuid_, counter), "w") as f:
             f.write(flags)
@@ -114,6 +118,7 @@ def retrieve():
         uuid_ = str(request.data.get('uuid', ''))
         version = str(request.data.get('version', ''))
         source = ''
+        html = ''
         flags = ''
 
         if not os.path.exists("/data/{}/{}".format(uuid_, version)):
@@ -122,12 +127,16 @@ def retrieve():
         with open("/data/{}/{}/source".format(uuid_, version), "r") as f:
             source = f.read()
             f.close()
+        with open("/data/{}/{}/html".format(uuid_, version), "r") as f:
+            html = f.read()
+            f.close()
         with open("/data/{}/{}/flags".format(uuid_, version), "r") as f:
             flags = f.read()
             f.close()
 
         return {
                    'source': source,
+                   'html': html,
                    'flags': flags,
                }, status.HTTP_201_CREATED
 

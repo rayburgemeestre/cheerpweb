@@ -119,6 +119,8 @@
 
     import { dom_example } from './dom_example'
     import { pong_example } from './pong_example'
+    import { call_cpp_example } from './call_cpp_example'
+    import { perf_example } from './perf_example'
 
     let cpp_code = dom_example.cpp
     let js_code = dom_example.js
@@ -184,6 +186,8 @@
                     return [
                         { title: 'DOM example', cpp_code: dom_example.cpp, 'js_code': dom_example.js, 'wasm_code': dom_example.wasm, 'html_code': dom_example.html, flags: dom_example.flags },
                         { title: 'Pong WASM example', cpp_code: pong_example.cpp, 'js_code': pong_example.js, 'wasm_code': pong_example.wasm, 'html_code': pong_example.html, flags: pong_example.flags },
+                        { title: 'Call C++ example', cpp_code: call_cpp_example.cpp, 'js_code': call_cpp_example.js, 'wasm_code': call_cpp_example.wasm, 'html_code': call_cpp_example.html, flags: call_cpp_example.flags },
+                        { title: 'JS vs Compiled JS perf', cpp_code: perf_example.cpp, 'js_code': perf_example.js, 'wasm_code': perf_example.wasm, 'html_code': perf_example.html, flags: perf_example.flags },
                     ]
                 }
             },
@@ -244,6 +248,7 @@
                 axios.post(url, {
                     flags: this.compiler_flags,
                     source: this.cpp_code,
+                    html: this.html_code,
                     uuid: this.uuid,
                 })
                     .then(function (response) {
@@ -302,6 +307,11 @@
                 this.wasm_code = ex.wasm_code
                 this.html_code = ex.html_code
                 this.compiler_flags = ex.flags
+
+                this.uuid = ''
+                this.version = ''
+                this.share_link = ''
+                window.location.hash = ''
                 return true;
             },
             select_link(event) {
@@ -358,9 +368,11 @@
                             this.compiler_output = str;
 
                             var code = response.data.source;
+                            var html = response.data.html;
                             var flags = response.data.flags;
 
                             this.cpp_code = code;
+                            this.html_code = html;
                             this.compiler_flags = flags;
 
                             this.uuid = load_hash
