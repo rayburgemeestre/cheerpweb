@@ -12,8 +12,6 @@ The project constists of three parts:
 
 And all of the above is deployed on Kubernetes, for this see the `./kube` directory.
 
-There is no storage support, so saving or sharing code is not yet possible. Be careful with this!
-
 ## Build
 
 For nodejs projects it can be difficult to setup a dev environment.
