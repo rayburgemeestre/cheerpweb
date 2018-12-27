@@ -98,10 +98,12 @@
                 <ul>
                   <li v-bind:class="{'is-active': output_tabs == 1}" v-on:click="output_tabs = 1"><a>Compiler output</a></li>
                   <li v-bind:class="{'is-active': output_tabs == 2}" v-on:click="output_tabs = 2"><a>Run output</a></li>
+                  <li v-bind:class="{'is-active': output_tabs == 3}" v-on:click="output_tabs = 3"><a>Resulting HTML</a></li>
                 </ul>
               </div>
               <textarea v-if="output_tabs == 1" class="textarea" placeholder="Compiler output will be displayed here.">{{ compiler_output }}</textarea>
               <iframe v-if="output_tabs == 2" src="about:blank" v-on:load="onLoadIframe" name="myIframe"></iframe>
+              <textarea v-if="output_tabs == 3" class="textarea" placeholder="Resulting HTML will be displayed here">{{ generated_html }}</textarea>
             </div>
           </div>
         </div>
@@ -175,7 +177,10 @@
                 type: String,
                 default: compiler_flags
             },
-
+            generated_html: {
+                type: String,
+                default: ''
+            },
             do_update_iframe: {
                 type: Boolean,
                 default: false
@@ -259,30 +264,33 @@
                     }
 
                     s += "<script>";
-                    // wasm
-                    s += "function fetchBuffer(path) {\n";
-                    s += "    return new Promise( (resolve, reject) => {\n";
-                    s += "        var wasm = '" + this.wasm_code.trim() + "';\n";
-                    s += "        wasm = atob(wasm)\n";
-                    s += "\n";
-                    s += "        var len = wasm.length;\n";
-                    s += "        var bytes = new Uint8Array(len);\n";
-                    s += "        for (var i = 0; i < len; i++) {\n";
-                    s += "            bytes[i] = wasm.charCodeAt(i);\n";
-                    s += "        }\n";
-                    s += "        resolve(bytes.buffer);\n";
-                    s += "    });\n";
-                    s += "}\n";
+                    if (this.compiler_flags.indexOf('-cheerp-mode=wasm') != -1) {
+                        // wasm
+                        s += "function fetchBuffer(path) {\n";
+                        s += "    return new Promise( (resolve, reject) => {\n";
+                        s += "        var wasm = '" + this.wasm_code.trim() + "';\n";
+                        s += "        wasm = atob(wasm)\n";
+                        s += "\n";
+                        s += "        var len = wasm.length;\n";
+                        s += "        var bytes = new Uint8Array(len);\n";
+                        s += "        for (var i = 0; i < len; i++) {\n";
+                        s += "            bytes[i] = wasm.charCodeAt(i);\n";
+                        s += "        }\n";
+                        s += "        resolve(bytes.buffer);\n";
+                        s += "    });\n";
+                        s += "}\n";
+                    }
                     s += this.js_code;
                     s += "<\/script>";
 
                     if (m != -1) {
-                        s += this.html_code.substr(m);
+                        s += this.html_code.substr(m + marker.length);
                     } else if (head != -1) {
                         s += this.html_code.substr(head + 6 /* len(<head>) */ + 1);
                     }
 
                     iframe.srcdoc = s;
+                    this.generated_html = s;
                 }
             },
             onLoadIframe(event) {
