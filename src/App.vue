@@ -117,10 +117,10 @@
     const _ = require('lodash');
     const axios = require('axios');
 
-    import { dom_example } from './dom_example'
-    import { pong_example } from './pong_example'
-    import { call_cpp_example } from './call_cpp_example'
-    import { perf_example } from './perf_example'
+    import { dom_example } from './examples/dom_example'
+    import { pong_example } from './examples/pong_example'
+    import { call_cpp_example } from './examples/call_cpp_example'
+    import { perf_example } from './examples/perf_example'
 
     let cpp_code = dom_example.cpp
     let js_code = dom_example.js
@@ -206,28 +206,76 @@
         },
         methods: {
             update_iframe(name) {
-                const iframe = findIframeByName(name);
-                iframe.document.body.innerHTML = '';
-                iframe.document.write(this.html_code);
-                iframe.document.write("<script>");
+                if (false) {
+                    const iframe = findIframeByName(name);
+                    iframe.document.body.innerHTML = ''
+                    var head = this.html_code.indexOf("<head>");
+                    if (head != -1) {
+                        iframe.document.write(this.html_code.substr(0, head + 6 /* len(<head>) */));
+                    }
+                    else {
+                        iframe.document.write(this.html_code);
+                    }
 
-                // wasm
-                iframe.document.write("function fetchBuffer(path) {\n");
-                iframe.document.write("    return new Promise( (resolve, reject) => {\n");
-                iframe.document.write("        var wasm = '" + this.wasm_code.trim() + "';\n");
-                iframe.document.write("        wasm = atob(wasm)\n");
-                iframe.document.write("\n");
-                iframe.document.write("        var len = wasm.length;\n");
-                iframe.document.write("        var bytes = new Uint8Array(len);\n");
-                iframe.document.write("        for (var i = 0; i < len; i++) {\n");
-                iframe.document.write("            bytes[i] = wasm.charCodeAt(i);\n");
-                iframe.document.write("        }\n");
-                iframe.document.write("        resolve(bytes.buffer);\n");
-                iframe.document.write("    });\n");
-                iframe.document.write("}\n");
+                    iframe.document.write("<script>");
+                    // wasm
+                    iframe.document.write("function fetchBuffer(path) {\n");
+                    iframe.document.write("    return new Promise( (resolve, reject) => {\n");
+                    iframe.document.write("        var wasm = '" + this.wasm_code.trim() + "';\n");
+                    iframe.document.write("        wasm = atob(wasm)\n");
+                    iframe.document.write("\n");
+                    iframe.document.write("        var len = wasm.length;\n");
+                    iframe.document.write("        var bytes = new Uint8Array(len);\n");
+                    iframe.document.write("        for (var i = 0; i < len; i++) {\n");
+                    iframe.document.write("            bytes[i] = wasm.charCodeAt(i);\n");
+                    iframe.document.write("        }\n");
+                    iframe.document.write("        resolve(bytes.buffer);\n");
+                    iframe.document.write("    });\n");
+                    iframe.document.write("}\n");
+                    iframe.document.write(this.js_code);
+                    iframe.document.write("<\/script>");
 
-                iframe.document.write(this.js_code);
-                iframe.document.write("<\/script>");
+                    if (head != -1) {
+                        iframe.document.write(this.html_code.substr(head + 6 /* len(<head>) */ + 1));
+                    }
+                } else {
+                    // new experimental rendering
+                    //const iframe = findIframeByName(name);
+                    const iframe = document.getElementsByTagName('iframe')[0];
+                    //iframe.document.body.innerHTML = ''
+                    var head = this.html_code.indexOf("<head>");
+                    var s = "";
+                    if (head != -1) {
+                        s += this.html_code.substr(0, head + 6 /* len(<head>) */);
+                    }
+                    else {
+                        s += this.html_code;
+                    }
+
+                    s += "<script>";
+                    // wasm
+                    s += "function fetchBuffer(path) {\n";
+                    s += "    return new Promise( (resolve, reject) => {\n";
+                    s += "        var wasm = '" + this.wasm_code.trim() + "';\n";
+                    s += "        wasm = atob(wasm)\n";
+                    s += "\n";
+                    s += "        var len = wasm.length;\n";
+                    s += "        var bytes = new Uint8Array(len);\n";
+                    s += "        for (var i = 0; i < len; i++) {\n";
+                    s += "            bytes[i] = wasm.charCodeAt(i);\n";
+                    s += "        }\n";
+                    s += "        resolve(bytes.buffer);\n";
+                    s += "    });\n";
+                    s += "}\n";
+                    s += this.js_code;
+                    s += "<\/script>";
+
+                    if (head != -1) {
+                        s += this.html_code.substr(head + 6 /* len(<head>) */ + 1);
+                    }
+
+                    iframe.srcdoc = s;
+                }
             },
             onLoadIframe(event) {
                 // iframe ready, set flag?
