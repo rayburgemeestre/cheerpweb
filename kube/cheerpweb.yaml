@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: cheerpweb
 spec:
-  replicas: 1
+  replicas: 2
   revisionHistoryLimit: 2
   template:
     metadata:
@@ -55,6 +55,13 @@ spec:
         ports:
         - containerPort: 5000
           name: http
+        volumeMounts:
+        - mountPath: "/data"
+          name: cheerpstorage
+      volumes:
+      - name: cheerpstorage
+        persistentVolumeClaim:
+         claimName: cheerp-api-claim
 ---
 apiVersion: v1
 kind: Service
@@ -71,3 +78,16 @@ spec:
   selector:
     app: cheerpapiapp
     tier: cheerpapi
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: cheerp-api-claim
+spec:
+  accessModes:
+    - ReadWriteMany
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: 200Gi
+  storageClassName: cheerp-storage

@@ -1,0 +1,15 @@
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: kube-cheerp-volume
+  labels:
+    type: local
+spec:
+  storageClassName: cheerp-storage
+  capacity:
+    storage: 200Gi
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: /home/kube/cheerpweb/data/
+
