@@ -8,25 +8,16 @@ class [[cheerp::jsexport]] JsBridge
 {
 public:
     JsBridge() = default;
-	
-	void sort(client::Float64Array* ar)
-	{
-        // copy all the numbers
-		std::vector<double> test;
-		test.reserve(ar->get_length());
-
-	    for(size_t i=0;i<ar->get_length();i++) {
-            test.push_back((*ar)[i]);
-		}
-
+    
+    void sort(client::Float64Array* ar)
+    {
+        // get a plain c pointer
+        double* ptr = &(*ar)[0];
+        size_t len = ar->get_length(); 
+        
         // sort them
-	    std::sort(std::begin(test), std::end(test), std::less<double>()) ;
-
-        // copy them back
-	    for(size_t i=0;i<ar->get_length();i++) {
-            (*ar)[i] = test[i];
-		}
-	}
+        std::sort(ptr, ptr + len, std::less<double>()) ;
+    }
 };
 void webMain() {
 }
@@ -37,18 +28,17 @@ const html_code = `
   <head>
     <script>
       function benchmark(func) {
-        var start = new Date().getTime();
+        let start = new Date().getTime();
         func();
-        var time = new Date().getTime() - start;
-        return time;
+        return new Date().getTime() - start;
       }
 
       // Please note that running this might take a while! (but I expect < 30s on an average PC)
-      for (var n = 10; n <= 10000000; n *= 10) {
+      for (let n = 10; n <= 10000000; n *= 10) {
         document.write("<strong>Test for N=",n,"</strong><BR>");
-              
-        var some_array = [], some_array2 = []; 
-        var time = benchmark(function () {
+
+        let some_array = [], some_array2 = [],
+        time = benchmark(function () {
           for (var i = 0; i < n; ++i) {
             var num = Math.random();
             some_array.push(num);
@@ -63,7 +53,7 @@ const html_code = `
           jsBridge.sort(some_array2)
         );
         document.write("C++: ",some_array2.slice(0, 1), ", took: ",(time/1000.0)," secs<BR>");
-        
+
         // JS
         time = benchmark(_ =>
           some_array.sort((a, b) => a - b) // lambda required for sorting numerically instead of alphabetically
@@ -72,8 +62,6 @@ const html_code = `
       }
     </script>
   </head>
-  <body>
-  </body>
 </html>
 `.trim();
 
