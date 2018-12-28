@@ -80,7 +80,7 @@ const flags = `
 const wasm_code = '';
 
 export const example = {
-    title: 'JS vs Compiled JS perf',
+    title: 'JS vs Compiled JS perf (simple loop)',
     cpp_code: cpp_code,
     js_code: js_code,
     wasm_code: wasm_code,
