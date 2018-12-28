@@ -1,0 +1,25 @@
+const cpp_code = ``.trim();
+
+const html_code = ``.trim();
+
+const js_code = ``.trim();
+
+const flags = `
+-cheerp-pretty-code
+-cheerp-no-type-optimizer
+-cheerp-no-native-math
+-cheerp-no-math-imul
+-cheerp-no-math-fround
+-O3
+-target cheerp`.trim()
+
+const wasm_code = '';
+
+export const example = {
+    title: 'Some example',
+    cpp_code: cpp_code,
+    js_code: js_code,
+    wasm_code: wasm_code,
+    html_code: html_code,
+    flags: flags
+}
