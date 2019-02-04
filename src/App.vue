@@ -34,7 +34,7 @@
 
           <div class="navbar-end">
             <div class="share">
-              <a href="https://paypal.me/cppse?locale.x=en_US"><img target="_blank" class="donate" src="donate.png"></a>
+              <a href="https://paypal.me/cppse?locale.x=en_US" target="_blank"><img class="donate" src="donate.png"></a>
               <input class="input" type="text" v-on:focus="select_link($event)" v-model="share_link" placeholder="Compile before sharing link!">
             </div>
             <div class="navbar-item">
