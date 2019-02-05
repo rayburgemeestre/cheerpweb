@@ -111,6 +111,11 @@
 
 <style scoped>
   .container {
+    width: calc(100vw - ( 2.5rem) );
+  }
+@media screen and (min-width: 769px){
+  .container {
     width: calc(50vw - ( 2.5rem) );
   }
+}
 </style>
