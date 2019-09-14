@@ -1,4 +1,4 @@
-FROM ubuntu:17.10
+FROM ubuntu:18.04
 
 MAINTAINER Ray Burgemeestre
 
@@ -6,7 +6,7 @@ RUN apt-get update && \
     apt-get install -y software-properties-common && \
     add-apt-repository ppa:leaningtech-dev/cheerp-ppa && \
     apt-get update
-    
+
 RUN apt-get -y install cheerp-core
 
 RUN apt-get -y install python3-pip
