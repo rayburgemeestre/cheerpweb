@@ -11,5 +11,5 @@ spec:
   accessModes:
     - ReadWriteMany
   hostPath:
-    path: /home/kube/cheerpweb/data/
+    path: /mnt2/NAS/kube/cheerpweb/data/
 

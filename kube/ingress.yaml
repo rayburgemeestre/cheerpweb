@@ -1,0 +1,49 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    certmanager.k8s.io/issuer: letsencrypt-prod
+    kubernetes.io/ingress.provider: nginx
+    nginx.ingress.kubernetes.io/proxy-body-size: "0"
+    nginx.ingress.kubernetes.io/proxy-buffering: "off"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "900"
+    nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
+  name: cheerp
+  namespace: default
+spec:
+  rules:
+  - host: cheerp.cppse.nl
+    http:
+      paths:
+      - path: /api
+        backend:
+          serviceName: cheerpapi
+          servicePort: 5000
+      - path: /
+        backend:
+          serviceName: cheerpweb
+          servicePort: 80
+  tls:
+  - hosts:
+    - cheerp.cppse.nl
+    secretName: cheerp-tls
+---
+apiVersion: certmanager.k8s.io/v1alpha1
+kind: Certificate
+metadata:
+  name: cheerp
+  namespace: default
+spec:
+  acme:
+    config:
+    - domains:
+      - cheerp.cppse.nl
+      http01:
+        ingress: ""
+  commonName: ""
+  dnsNames:
+  - cheerp.cppse.nl
+  issuerRef:
+    kind: Issuer
+    name: letsencrypt-prod
+  secretName: cheerp-tls
